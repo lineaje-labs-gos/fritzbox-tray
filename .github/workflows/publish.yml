@@ -186,7 +186,9 @@ jobs:
 
       - name: Upload all signed files
         run: |
-         jf rt u "dist/*.asc" "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token=${{ secrets.JFROG_PASSWORD }}
+         pushd dist > /dev/null 2>&1
+         jf rt u "*.asc" "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token=${{ secrets.JFROG_PASSWORD }}
+         popd > /dev/null 2>&1
 
       - name: Set CVE property in Artifactory
         # Property is set on the source distribution signature file to prevent multiple calls
