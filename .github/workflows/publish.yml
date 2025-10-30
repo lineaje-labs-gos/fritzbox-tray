@@ -149,10 +149,8 @@ jobs:
         run: |
           if [ -f requirements.txt ]; then
             # Packaging is executed inside a venv. Include requirements.txt as setup.py may refer to it
-            echo "Creating MANIFEST.in for requirements.txt"
-            cat > MANIFEST.in <<EOF
-            include requirements.txt
-            EOF
+            echo "Updated MANIFEST.in for requirements.txt"
+            echo 'include requirements.txt' >> MANIFEST.in
           fi
           python -m build # builds both wheel + sdist
         continue-on-error: false
