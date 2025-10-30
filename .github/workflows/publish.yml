@@ -49,7 +49,7 @@ jobs:
           mkdir -p ~/.config/pip
           cat > ~/.config/pip/pip.conf <<EOF
           [global]
-          extra-index-url = https://${{ secrets.CUSTOMER_ZERO_USERNAME }}:${{ secrets.CUSTOMER_ZERO_TOKEN }}@https://${{ secrets.JFROG_HOST_NAME }}/artifactory/api/pypi/${{ secrets.PYPI_GOS_ALL_ARTIFACTORY }}/simple
+          extra-index-url = https://${{ secrets.CUSTOMER_ZERO_USERNAME }}:${{ secrets.CUSTOMER_ZERO_TOKEN }}@${{ secrets.JFROG_HOST_NAME }}/artifactory/api/pypi/${{ secrets.PYPI_GOS_ALL_ARTIFACTORY }}/simple
           trusted-host = ${{ secrets.JFROG_HOST_NAME }}
           EOF
 
@@ -124,7 +124,7 @@ jobs:
           mkdir -p ~/.config/pip
           cat > ~/.config/pip/pip.conf <<EOF
           [global]
-          extra-index-url = https://${{ secrets.CUSTOMER_ZERO_USERNAME }}:${{ secrets.CUSTOMER_ZERO_TOKEN }}@https://${{ secrets.JFROG_HOST_NAME }}/artifactory/api/pypi/${{ secrets.PYPI_GOS_ALL_ARTIFACTORY }}/simple
+          extra-index-url = https://${{ secrets.CUSTOMER_ZERO_USERNAME }}:${{ secrets.CUSTOMER_ZERO_TOKEN }}@${{ secrets.JFROG_HOST_NAME }}/artifactory/api/pypi/${{ secrets.PYPI_GOS_ALL_ARTIFACTORY }}/simple
           trusted-host = ${{ secrets.JFROG_HOST_NAME }}
           EOF
 
