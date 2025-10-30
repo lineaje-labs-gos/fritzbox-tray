@@ -174,10 +174,7 @@ jobs:
           ARTIFACTORY_USER: ${{ secrets.JFROG_USERNAME }}
           ARTIFACTORY_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
         run: |
-          KEY_ID=$(gpg --list-secret-keys --keyid-format=long | grep sec | head -n1 | awk '{print $2}' | cut -d'/' -f2)
           twine upload \
-            --sign \
-            --identity "$KEY_ID" \
             --repository-url "${ARTIFACTORY_URL}" \
             -u "${ARTIFACTORY_USER}" -p "${ARTIFACTORY_PASSWORD}" \
             dist/* 2>&1 | tee pypi-publish.log
@@ -186,6 +183,10 @@ jobs:
         run: |
          PROJECT_NAME=${GITHUB_REPOSITORY##*/}
          jf rt u "pypi-publish.log" "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/logs/publish/${PROJECT_NAME}-${{ github.event.inputs.release_version }}/" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token=${{ secrets.JFROG_PASSWORD }}
+
+      - name: Upload all signed files
+        run: |
+         jf rt u "dist/*.asc" "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token=${{ secrets.JFROG_PASSWORD }}
 
       - name: Set CVE property in Artifactory
         # Property is set on the source distribution signature file to prevent multiple calls
