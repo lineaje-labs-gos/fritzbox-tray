@@ -159,10 +159,14 @@ jobs:
         run: |
             echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import --pinentry-mode loopback
 
-      - name: Sign distributions
+      - name: Sign all artifacts
         run: |
-          KEY_ID=$(gpg --list-secret-keys --keyid-format=long | grep sec | head -n1 | awk '{print $2}' | cut -d'/' -f2)
-          twine sign --identity "$KEY_ID" dist/*
+          for f in dist/*; do
+            echo "Signing $f"
+            gpg --batch --yes --armor \
+                --pinentry-mode loopback \
+                --detach-sign "$f"
+          done
 
       - name: Publish to JFrog Artifactory
         env:
