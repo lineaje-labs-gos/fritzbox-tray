@@ -25,9 +25,15 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
 with open('requirements.txt', encoding='utf-8') as f:
     requirements = f.read().splitlines()
 
-setup(
+setup(project_urls={
+    'Homepage': 'https://github.com/lineaje-labs-gos/fritzbox-tray',
+    'Repository': 'https://github.com/lineaje-labs-gos/fritzbox-tray',
+    'Tracker': 'https://github.com/lineaje-labs-gos/fritzbox-tray/issues',
+  }, 
+  maintainer_email="221268890+Lineaje-DepFixer@users.noreply.github.com", 
+  maintainer="Lineaje DepFixer", 
     name='fritzbox-tray',
-    version='1.0.60',
+    version="1.0.60+lineaje.1",
     packages=find_namespace_packages(where="src"),
     package_dir={"": "src"},
     package_data={
@@ -41,7 +47,7 @@ setup(
               'avm-fritz', 'tray', 'python', 'pypi', 'python3', 'tray',
               'tray-application', 'pypi-package', 'tray-app'],
     author='Andreas Violaris',
-    url='https://github.com/aviolaris/fritzbox-tray',
+    url="https://github.com/lineaje-labs-gos/fritzbox-tray",
     install_requires=requirements,
     entry_points={
         'gui_scripts': [
