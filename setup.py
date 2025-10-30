@@ -48,7 +48,7 @@ setup(project_urls={
               'tray-application', 'pypi-package', 'tray-app'],
     author='Andreas Violaris',
     url="https://github.com/lineaje-labs-gos/fritzbox-tray",
-    install_requires=requirements,
+    install_requires=['pillow==10.3.0'] + [req for req in requirements if not req.startswith('pillow')],
     entry_points={
         'gui_scripts': [
             'fritzbox-tray=fritzbox_tray.__main__:main',
