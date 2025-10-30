@@ -174,8 +174,10 @@ jobs:
           ARTIFACTORY_USER: ${{ secrets.JFROG_USERNAME }}
           ARTIFACTORY_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
         run: |
+          KEY_ID=$(gpg --list-secret-keys --keyid-format=long | grep sec | head -n1 | awk '{print $2}' | cut -d'/' -f2)
           twine upload \
             --sign \
+            --identity "$KEY_ID" \
             --repository-url "${ARTIFACTORY_URL}" \
             -u "${ARTIFACTORY_USER}" -p "${ARTIFACTORY_PASSWORD}" \
             dist/* 2>&1 | tee pypi-publish.log
@@ -189,5 +191,17 @@ jobs:
         # Property is set on the source distribution signature file to prevent multiple calls
         run: |
           PROJECT_NAME=${GITHUB_REPOSITORY##*/}
-          jf rt sp "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/${PROJECT_NAME}/${{ github.event.inputs.release_version }}/${PROJECT_NAME}-${{ github.event.inputs.release_version }}.tar.gz.asc" "fixed_cves=${{ github.event.inputs.fixed_cves }}" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token ${{ secrets.JFROG_PASSWORD }}
+          # Extract PyPI version from the tag
+          RAW_VERSION=${{ github.event.inputs.release_version }}
+          # Strip leading "v"
+          version="${RAW_VERSION#v}"
+          # Split and reconstruct
+          main="${version%%-*}"       # 1.0.60
+          rest="${version#*-}"        # lineaje-01
+          label="${rest%-*}"          # lineaje
+          num="${rest##*-}"           # 01
+          num=$((10#$num))            # remove leading zeros
+          converted_version="${main}+${label}.${num}"
+
+          jf rt sp "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/${PROJECT_NAME}/${converted_version}/${PROJECT_NAME}-${converted_version}.tar.gz.asc" "fixed_cves=${{ github.event.inputs.fixed_cves }}" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token ${{ secrets.JFROG_PASSWORD }}
 
