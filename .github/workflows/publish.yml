@@ -181,17 +181,10 @@ jobs:
 
       - name: Upload publish log to Artifactory
         run: |
-         PROJECT_NAME=${GITHUB_REPOSITORY##*/}
-         jf rt u "pypi-publish.log" "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/logs/publish/${PROJECT_NAME}-${{ github.event.inputs.release_version }}/" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token=${{ secrets.JFROG_PASSWORD }}
+          PROJECT_NAME=${GITHUB_REPOSITORY##*/}
+          jf rt u "pypi-publish.log" "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/logs/publish/${PROJECT_NAME}-${{ github.event.inputs.release_version }}/" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token=${{ secrets.JFROG_PASSWORD }}
 
-      - name: Upload all signed files
-        run: |
-         pushd dist > /dev/null 2>&1
-         jf rt u "*.asc" "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token=${{ secrets.JFROG_PASSWORD }}
-         popd > /dev/null 2>&1
-
-      - name: Set CVE property in Artifactory
-        # Property is set on the source distribution signature file to prevent multiple calls
+      - name: Upload all signed files and set CVE property in Artifactory
         run: |
           PROJECT_NAME=${GITHUB_REPOSITORY##*/}
           # Extract PyPI version from the tag
@@ -206,5 +199,10 @@ jobs:
           num=$((10#$num))            # remove leading zeros
           converted_version="${main}+${label}.${num}"
 
+          pushd dist > /dev/null 2>&1
+          jf rt u "*.asc" "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/${PROJECT_NAME}/${converted_version}/" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token=${{ secrets.JFROG_PASSWORD }}
+          popd > /dev/null 2>&1
+
+          # Property is set on the source distribution signature file to prevent multiple calls
           jf rt sp "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/${PROJECT_NAME}/${converted_version}/${PROJECT_NAME}-${converted_version}.tar.gz.asc" "fixed_cves=${{ github.event.inputs.fixed_cves }}" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token ${{ secrets.JFROG_PASSWORD }}
 
