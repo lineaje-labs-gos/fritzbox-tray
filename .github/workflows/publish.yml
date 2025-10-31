@@ -204,6 +204,7 @@ jobs:
           tar_gz_asc_file=$(find . -type f -name "*.tar.gz.asc" -print -quit)
           popd > /dev/null 2>&1
 
+          echo "$tar_gz_asc_file was found"
           # Property is set on the source distribution signature file to prevent multiple calls
           jf rt sp "${{ secrets.PYPI_STAGING_ARTIFACTORY }}/${PROJECT_NAME}/${converted_version}/${tar_gz_asc_file}" "fixed_cves=${{ github.event.inputs.fixed_cves }}" --url https://${{ secrets.JFROG_HOST_NAME }}/artifactory/ --access-token ${{ secrets.JFROG_PASSWORD }}
 
